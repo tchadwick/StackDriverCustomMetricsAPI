@@ -29,6 +29,7 @@ namespace StackDriver
                     collected_at = collectedAt.ToUnixTime(),
                     name = metricName,
                     value = metricValue,
+                    instance = GetAWSInstanceId()
                 };
 
                 try
@@ -38,6 +39,24 @@ namespace StackDriver
                 catch (Exception ex)
                 {
                     // Do something with the exception
+                }
+            }
+        }
+
+        public static string GetAWSInstanceId()
+        {
+            using (WebClient wc = new WebClient())
+            {
+
+                var URI = new Uri("http://169.254.169.254/latest/meta-data/instance-id");
+
+                try
+                {
+                    return wc.DownloadString(URI);
+                }
+                catch (Exception ex)
+                {
+                    return "";
                 }
             }
         }
@@ -55,6 +74,7 @@ namespace StackDriver
         public string name { get; set; }
         public object value { get; set; }
         public long collected_at { get; set; }
+        public string instance { get; set; }
     }
 
 
